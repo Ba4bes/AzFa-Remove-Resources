@@ -1,0 +1,10 @@
+{
+  "bindings": [
+    {
+      "name": "SecondPoison",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "Second-resourcequeue-poison"
+    }
+  ]
+}

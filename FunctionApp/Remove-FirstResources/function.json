@@ -1,0 +1,16 @@
+{
+  "bindings": [
+    {
+      "name": "ResourceId",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "first-resourcequeue"
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "JobQueue2",
+      "queueName": "second-resourcequeue"
+    }
+  ]
+}

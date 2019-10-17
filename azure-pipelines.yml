@@ -1,0 +1,88 @@
+name: DeployAzureFunction
+variables:
+  FunctionAppName: 'UniqueFunctionAppNameHere'
+
+trigger:
+  branches:
+    include:
+    - '*'  # must quote since "*" is a YAML reserved character; we want a string
+
+stages:
+
+- stage: Build
+  jobs:
+  - job: Test_MsIgniteAzDo
+    pool:
+      vmImage: windows-2019
+    steps:
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Test ARM Deployment'
+      inputs:
+        azureSubscription: MPN
+        resourceGroupName: MsIgniteAzDOdeploy
+        location: 'west Europe'
+        csmFile: Deployment/azuredeploy.json
+        csmParametersFile: Deployment/azuredeploy.parameters.json
+        overrideParameters: '-functionAppName $(FunctionAppName)'
+        deploymentMode: Validation
+  - job: Build_MsIgniteAzDo
+    pool:
+      vmImage: windows-2019
+    steps:
+    - task: ArchiveFiles@2
+      displayName: 'Archive FunctionApp'
+      inputs:
+        rootFolderOrFile: FunctionApp
+        includeRootFolder: false
+        archiveFile: '$(System.DefaultWorkingDirectory)/zip/FunctionApp.zip'
+    - task: PublishPipelineArtifact@0
+      inputs:
+        artifactName: 'zip'
+        targetPath: '$(System.DefaultWorkingDirectory)/zip'
+
+- stage: Deploy
+  condition: 
+    and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  dependsOn:
+    Build
+  jobs:
+  - job: Deploy_ARM
+    condition: 
+      eq(variables['DeployARM'], 'True')
+    pool:
+      vmImage: windows-2019
+    steps:
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Deploy Azure Resources'
+      inputs:
+        azureSubscription: MPN
+        resourceGroupName: MsIgniteAzDOdeploy
+        location: 'West Europe'
+        csmFile: Deployment/azuredeploy.json
+        csmParametersFile: Deployment/azuredeploy.parameters.json
+        overrideParameters: '-functionAppName $(FunctionAppName)'
+        deploymentMode: Incremental
+        deploymentOutputs: DeploymentOutput
+    - task: AzurePowerShell@3
+      displayName: 'Azure PowerShell script: FilePath'
+      inputs:
+        azureSubscription: MPN
+        ScriptPath: Deployment/deploy.ps1
+        ScriptArguments: '-DeploymentOutput ''$(DeploymentOutput)'''
+        azurePowerShellVersion: LatestVersion
+  - job: Deploy_MsIgniteAzDo
+    pool:
+      vmImage: windows-2019
+    steps:
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'zip'
+        targetPath: '$(System.DefaultWorkingDirectory)/zip'
+    - task: AzureFunctionApp@1
+      displayName: 'Deploy Azure Function'
+      inputs:
+        azureSubscription: MPN
+        appType: functionApp
+        appName: $(FunctionAppName)
+        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        deploymentMethod: 'auto'

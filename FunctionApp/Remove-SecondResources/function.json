@@ -1,0 +1,10 @@
+{
+  "bindings": [
+    {
+      "name": "ResourceId",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "second-resourcequeue"
+    }
+  ]
+}
