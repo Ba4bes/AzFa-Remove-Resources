@@ -1,6 +1,6 @@
 name: DeployAzureFunction
 variables:
-  FunctionAppName: 'UniqueFunctionAppNameHere'
+  FunctionAppName: 'MSIgniteAZDoApp'
 
 trigger:
   branches:
@@ -18,7 +18,7 @@ stages:
     - task: AzureResourceGroupDeployment@2
       displayName: 'Test ARM Deployment'
       inputs:
-        azureSubscription: MPN
+        azureSubscription: AzureCon
         resourceGroupName: MsIgniteAzDOdeploy
         location: 'west Europe'
         csmFile: Deployment/azuredeploy.json
@@ -55,7 +55,7 @@ stages:
     - task: AzureResourceGroupDeployment@2
       displayName: 'Deploy Azure Resources'
       inputs:
-        azureSubscription: MPN
+        azureSubscription: AzureCon
         resourceGroupName: MsIgniteAzDOdeploy
         location: 'West Europe'
         csmFile: Deployment/azuredeploy.json
@@ -66,7 +66,7 @@ stages:
     - task: AzurePowerShell@3
       displayName: 'Azure PowerShell script: FilePath'
       inputs:
-        azureSubscription: MPN
+        azureSubscription: AzureCon
         ScriptPath: Deployment/deploy.ps1
         ScriptArguments: '-DeploymentOutput ''$(DeploymentOutput)'''
         azurePowerShellVersion: LatestVersion
