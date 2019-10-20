@@ -49,8 +49,6 @@ stages:
     Build
   jobs:
   - job: Deploy_ARM
-    condition:
-      eq(variables['DeployARM'], 'True')
     pool:
       vmImage: windows-2019
     steps:
