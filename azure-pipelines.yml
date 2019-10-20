@@ -1,6 +1,8 @@
 name: DeployAzureFunction
 variables:
-  FunctionAppName: 'MSIgniteAZDoApp'
+  FunctionAppName: 'UniqueStorageAccountName'
+  AzureConnectionName: 'Example'
+  resourceGroupName: 'NameoftheResourceGroupe'
 
 trigger:
   branches:
@@ -11,21 +13,21 @@ stages:
 
 - stage: Build
   jobs:
-  - job: Test_MsIgniteAzDo
+  - job: Test_FADeployment
     pool:
       vmImage: windows-2019
     steps:
     - task: AzureResourceGroupDeployment@2
       displayName: 'Test ARM Deployment'
       inputs:
-        azureSubscription: AzureCon
-        resourceGroupName: MsIgniteAzDOdeploy
+        azureSubscription: $(AzureConnectionName)
+        resourceGroupName: $(ResourceGroupName)
         location: 'west Europe'
         csmFile: Deployment/azuredeploy.json
         csmParametersFile: Deployment/azuredeploy.parameters.json
         overrideParameters: '-functionAppName $(FunctionAppName)'
         deploymentMode: Validation
-  - job: Build_MsIgniteAzDo
+  - job: Build_FA
     pool:
       vmImage: windows-2019
     steps:
@@ -41,13 +43,13 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)/zip'
 
 - stage: Deploy
-  condition: 
+  condition:
     and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   dependsOn:
     Build
   jobs:
   - job: Deploy_ARM
-    condition: 
+    condition:
       eq(variables['DeployARM'], 'True')
     pool:
       vmImage: windows-2019
@@ -55,8 +57,8 @@ stages:
     - task: AzureResourceGroupDeployment@2
       displayName: 'Deploy Azure Resources'
       inputs:
-        azureSubscription: AzureCon
-        resourceGroupName: MsIgniteAzDOdeploy
+        azureSubscription: $(AzureConnectionName)
+        resourceGroupName: $(ResourceGroupName)
         location: 'West Europe'
         csmFile: Deployment/azuredeploy.json
         csmParametersFile: Deployment/azuredeploy.parameters.json
@@ -66,13 +68,15 @@ stages:
     - task: AzurePowerShell@3
       displayName: 'Azure PowerShell script: FilePath'
       inputs:
-        azureSubscription: AzureCon
+        azureSubscription: $(AzureConnectionName)
         ScriptPath: Deployment/deploy.ps1
         ScriptArguments: '-DeploymentOutput ''$(DeploymentOutput)'''
         azurePowerShellVersion: LatestVersion
-  - job: Deploy_MsIgniteAzDo
+  - job: Deploy_FA
     pool:
       vmImage: windows-2019
+    dependsOn:
+      Deploy_ARM
     steps:
     - task: DownloadPipelineArtifact@0
       inputs:
@@ -81,7 +85,7 @@ stages:
     - task: AzureFunctionApp@1
       displayName: 'Deploy Azure Function'
       inputs:
-        azureSubscription: MPN
+        azureSubscription: $(AzureConnectionName)
         appType: functionApp
         appName: $(FunctionAppName)
         package: '$(System.DefaultWorkingDirectory)/**/*.zip'
