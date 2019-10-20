@@ -41,8 +41,8 @@ For an example of how to use it, see the following blog post.
 
 - Change the three parameters at the top:
   - `FunctionAppName`: the name of the new app, should be globally unique
-  `AzureConnectionName`: the name of the service connection to Azure in Azure DevOps
-  `resourceGroupName`: The name of the resourcegroup the app should be placed in.
+  - `AzureConnectionName`: the name of the service connection to Azure in Azure DevOps
+  - `resourceGroupName`: The name of the resourcegroup the app should be placed in.
 
   The location is set for West Europe, you can changed that as well. See the post below for more information:
 
