@@ -1,8 +1,8 @@
 name: DeployAzureFunction
 variables:
-  FunctionAppName: 'UniqueStorageAccountName'
-  AzureConnectionName: 'Example'
-  resourceGroupName: 'NameoftheResourceGroupe'
+  FunctionAppName: 'MsIgniteAzDoDeploy'
+  AzureConnectionName: 'AzureCon'
+  resourceGroupName: 'MsIgniteAzDoDeploy'
 
 trigger:
   branches:
