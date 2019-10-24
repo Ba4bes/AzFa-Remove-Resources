@@ -58,3 +58,5 @@ If you want to run this app in Azure without Azure DevOps, you can use the files
   This is the code for the Function app itself
 - **Azure-pipelines.yml**
   a pipeline to test and deploy this app through Azure DevOps
+- **Set-Permissions.ps1**
+  For manual deployment: a script to set the correct permissions
