@@ -44,8 +44,12 @@ The repository is ready to deploy through an Azure DevOps pipeline.
 For an example of how to use it, see the following blog post.
 (This post is about another app, but is easily translated to this use case). The most important thing is to change the settings in `azure-pipelines.yml`:
 
-- Change the FunctionApp Name at the top
-- Change the resourcegroup to one of your preference. The location is set for West Europe, you can changed that as well. See the post below for more information:
+- Change the three parameters at the top:
+  - `FunctionAppName`: the name of the new app, should be globally unique
+  - `AzureConnectionName`: the name of the service connection to Azure in Azure DevOps
+  - `resourceGroupName`: The name of the resourcegroup the app should be placed in.
+
+  The location is set for West Europe, you can changed that as well. See the post below for more information:
 
 [4bes.nl - Automatic setup: Deploy Azure Functions for PowerShell with Azure DevOps](https://4bes.nl/2019/06/16/deploy-azure-functions-for-powershell-with-azure-devops/)
 
@@ -59,3 +63,5 @@ If you want to run this app in Azure without Azure DevOps, you can use the files
   This is the code for the Function app itself
 - **Azure-pipelines.yml**
   a pipeline to test and deploy this app through Azure DevOps
+- **Set-Permissions.ps1**
+  For manual deployment: a script to set the correct permissions
