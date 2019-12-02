@@ -45,7 +45,7 @@ else {
     # The resource is removed.
     Try {
         Write-Output "Removing $ResourceName"
-        Remove-AzResource -ResourceId $ResourceId -Force -ErrorAction Stop
+ #       Remove-AzResource -ResourceId $ResourceId -Force -ErrorAction Stop
         Write-Output "Resource Removed: $ResourceName"
     }
     # If it fails, the script throws so another attempt will be done.
@@ -67,7 +67,7 @@ Catch {
 if ($null -eq $ExistingResources) {
     Write-Output "$Resourcegroup is empty, removing"
     Try {
-        Remove-AzResourceGroup -Name $Resourcegroup -Force -ErrorAction Stop
+ #       Remove-AzResourceGroup -Name $Resourcegroup -Force -ErrorAction Stop
     }
     Catch {
         Write-Error "Couldn't remove $($ResourceGroup.Name), $($_.Exception.Message)"

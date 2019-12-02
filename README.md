@@ -4,6 +4,11 @@ This Function apps Removes all resources with a tag that is defined in start-Fun
 By default this tag is "AutoDelete":"True".
 The app is meant to run on a schedule at the end of the day to clean up unwanted resources.
 
+*Note: this function app removes resources that can not be restored! It should be tested for your environment. To keep you safe I have commented out the remove-actions. To make use of the scripts, remove the comments from the following lines:*
+
+*Remove-FirstResources -  run.ps1: Line 48 and line 70*   
+*Remove-SecondResources - run.ps1: Line 43 and Line 63*
+
 ## Functionality
 
 This App contains five functions.
